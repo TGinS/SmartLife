@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------------------------
 
---ƒƒCƒ“
+--ƒƒCƒ“‚Å‚·
 
 -- show default status bar (iOS)
 display.setStatusBar( display.DefaultStatusBar )
