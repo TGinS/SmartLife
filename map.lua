@@ -7,6 +7,8 @@
 local composer = require "composer"
 local scene = composer.newScene()
 local widget = require "widget"
+local json = require "json"
+local http = require("socket.http")
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
@@ -32,6 +34,22 @@ function scene:create( event )
     text.x,text.y = screenW/2,screenH/2
     text:setFillColor(0,0,0)
 
+    print("---------")
+    local data = http.request("https://smart-life-web.herokuapp.com/invitation/1.json")
+    local invitation = json.decode(data)
+    print(invitation["id"])
+    print(invitation["name"])
+    print(invitation["creator"])
+    print(invitation["latitude"])
+    print(invitation["longitude"])
+    print(invitation["note"])
+    print(invitation["contract"])
+    print(invitation["end_date"])
+    print(invitation["candidates"])
+
+    --for key, val in pairs(decoded) do
+     --   print(key, val)
+    --end
     -- widget insert
     sceneGroup:insert( backGround )
     sceneGroup:insert( text )
