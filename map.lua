@@ -12,7 +12,7 @@ local http = require("socket.http")
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local backGround, text
+local backGround, map
 
 -- widget event
 
@@ -24,15 +24,12 @@ local backGround, text
 function scene:create( event )
     local sceneGroup = self.view
 
-    -- backGround
-    backGround = display.newImageRect( "imgs/background.jpg", display.contentWidth, display.contentHeight )
-    backGround.anchorX = 0
-    backGround.anchorY = 0
-
-    -- sample text
-    text = display.newText("Map Tab",100,100)
-    text.x,text.y = screenW/2,screenH/2
-    text:setFillColor(0,0,0)
+    -- map
+    map = native.newMapView( 20, 20, 280, 360 )
+    map.x = display.contentCenterX
+    map.y = display.contentCenterY
+    map.mapType = "standard"
+    map:setCenter( 37.331692, -122.030456 )
 
     print("---------")
     local data = http.request("https://smart-life-web.herokuapp.com/invitation/1.json")
@@ -51,15 +48,13 @@ function scene:create( event )
      --   print(key, val)
     --end
     -- widget insert
-    sceneGroup:insert( backGround )
-    sceneGroup:insert( text )
 end
 function scene:show( event )
     local sceneGroup = self.view
     local phase = event.phase
 
     if phase == "will" then
-        -- Called when the scene is still off screen and is about to move on screen
+        map.isVisible = true
     elseif phase == "did" then
         -- Called when the scene is now on screen
     end
@@ -69,7 +64,7 @@ function scene:hide( event )
     local phase = event.phase
 
     if event.phase == "will" then
-        -- Called when the scene is on screen and is about to move off screen
+        map.isVisible = false
     elseif phase == "did" then
         -- Called when the scene is now off screen
     end

@@ -29,7 +29,7 @@ function scene:create( event )
 
     -- sample text
     text = display.newText("Ranking Tab",100,100)
-    text.x,text.y = screenW/2,screenH/2
+    text.x,text.y = screenW/9,screenH/9
     text:setFillColor(0,0,0)
 
     -- widget insert
