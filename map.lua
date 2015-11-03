@@ -24,12 +24,17 @@ local backGround, map
 function scene:create( event )
     local sceneGroup = self.view
 
+    -- backGround
+    backGround = display.newImageRect( "imgs/background.jpg", display.contentWidth, display.contentHeight )
+    backGround.anchorX = 0
+    backGround.anchorY = 0
+
     -- map
-    map = native.newMapView( 20, 20, 280, 360 )
+    map = native.newMapView( 20, 20, screenW, screenH - 32 )
     map.x = display.contentCenterX
-    map.y = display.contentCenterY
+    map.y = display.contentCenterY - 32
     map.mapType = "standard"
-    map:setCenter( 37.331692, -122.030456 )
+    map:setCenter( 34.72166180618469, 137.73993516406247 )
 
     print("---------")
     local data = http.request("https://smart-life-web.herokuapp.com/invitation/1.json")
@@ -48,6 +53,9 @@ function scene:create( event )
      --   print(key, val)
     --end
     -- widget insert
+    sceneGroup:insert( backGround )
+
+
 end
 function scene:show( event )
     local sceneGroup = self.view
