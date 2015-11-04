@@ -1,8 +1,3 @@
------------------------------------------------------------------------------------------
---
--- map.lua
---
------------------------------------------------------------------------------------------
 
 local composer = require "composer"
 local scene = composer.newScene()
@@ -13,6 +8,11 @@ local http = require("socket.http")
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
 local backGround, map
+local inivitation_data = http.request("https://smart-life-web.herokuapp.com/invitation.json")
+local invitations = json.decode(inivitation_data)
+local provision_data = http.request("https://smart-life-web.herokuapp.com/provision.json")
+local provisions = json.decode(provision_data)
+
 
 -- widget event
 
@@ -29,29 +29,32 @@ function scene:create( event )
     backGround.anchorX = 0
     backGround.anchorY = 0
 
+
     -- map
     map = native.newMapView( 20, 20, screenW, screenH - 32 )
     map.x = display.contentCenterX
     map.y = display.contentCenterY - 32
     map.mapType = "standard"
-    map:setCenter( 34.72166180618469, 137.73993516406247 )
+    map: setRegion(34.7216618061847,137.739935164062,0.05,0.05,false)
+    map.isLocationVisible=true
 
-    print("---------")
-    local data = http.request("https://smart-life-web.herokuapp.com/invitation/1.json")
-    local invitation = json.decode(data)
-    print(invitation["id"])
-    print(invitation["name"])
-    print(invitation["creator"])
-    print(invitation["latitude"])
-    print(invitation["longitude"])
-    print(invitation["note"])
-    print(invitation["contract"])
-    print(invitation["end_date"])
-    print(invitation["candidates"])
+    -- add marker
+    local function addMarker( event )
+        for i=1,#invitations do
+            map:addMarker(invitations[i]["latitude"], invitations[i]["longitude"],{
+                title = invitations[i]["name"],
+                subtitle = "ïÂèW"})
+        end
+        for i=1,#provisions do
+            map:addMarker(provisions[i]["latitude"], provisions[i]["longitude"],{
+                title = provisions[i]["name"],
+                subtitle = "íÒãü"})
+        end
+    end
+    timer.performWithDelay( 10, addMarker )
 
-    --for key, val in pairs(decoded) do
-     --   print(key, val)
-    --end
+
+
     -- widget insert
     sceneGroup:insert( backGround )
 
