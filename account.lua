@@ -11,34 +11,92 @@ local json = require "json"
 local http = require("socket.http")
 local ltn12 = require'ltn12'
 
-
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local backGround,login, emailBox, emailText, passwordBox, passwordText, passwordConfirmationBox, passwrdConfirmationText,sendButton
+local loginBackGround,loginText, emailBox, emailText, passwordBox, passwordText, passwordConfirmationBox, passwrdConfirmationText,sendButton
+local accountBackground,userImage,userName,webSite,eMail,note
 
 -- widget event
-local function onSendButton(event)
-    if(event.phase=="ended") then
-        local emailText = emailBox.text
-        local passwordText = passwordBox.text
-        local passwordConfirmationText = passwordConfirmationBox.text
-        print(emailText)
-        print(passwordText)
-        print(passwordConfirmationText)
-        reqbody = [[email=test@test.com&password=123456789&password_confirmation=123456789]]
-        response_body = {}
-        socket.http.request{
-            url = "http://smart-life-web.herokuapp.com/api/ver1/auth/sign_in",
-            method = "POST",
-            source = ltn12.source.string(reqbody),
-            sink = ltn12.sink.table(response_body),
-        }
-        print(table.concat(response_body))
+local function displayLogin()
+    loginBackGround.isVisible = true
+    loginText.isVisible                 = true
+    emailBox.isVisible                  = true
+    emailText.isVisible                 = true
+    passwordBox.isVisible               = true
+    passwordText.isVisible              = true
+    passwordConfirmationBox.isVisible   = true
+    passwrdConfirmationText.isVisible   = true
+    sendButton.isVisible                = true
+    accountBackground.isVisible         = false
+    userImage.isVisible                 = false
+    userName.isVisible                  = false
+    webSite.isVisible                   = false
+    eMail.isVisible                     = false
+    note.isVisible                      = false
+end
+local function displayAccount()
+    loginBackGround.isVisible           = false
+    loginText.isVisible                 = false
+    emailBox.isVisible                  = false
+    emailText.isVisible                 = false
+    passwordBox.isVisible               = false
+    passwordText.isVisible              = false
+    passwordConfirmationBox.isVisible   = false
+    passwrdConfirmationText.isVisible   = false
+    sendButton.isVisible                = false
+    accountBackground.isVisible         = true
+    userImage.isVisible                 = true
+    userName.isVisible                  = true
+    webSite.isVisible                   = true
+    eMail.isVisible                     = true
+    note.isVisible                      = true
+    print(userInfo["uId"])
+    print(userInfo["accessToken"])
+end
+local function getUserAccount()
+    print("get account info via api")
+end
+local function sceneInitialize()
 
+    if(userInfo["uId"]==nil or userInfo["accessToken"]==nil) then
+        displayLogin()
+    else
+        getUserAccount()
+        displayAccount()
     end
 end
+local function getUserInfo()
+    -- get text
+    local emailText = emailBox.text
+    local passwordText = passwordBox.text
+    local passwordConfirmationText = passwordConfirmationBox.text
 
+    -- http request
+    local reqbody = "email="..emailText.."&password="..passwordText.."&password_confirmation="..passwordConfirmationText
+    local respbody = {}
+    local body, code, headers, status = http.request{
+        url = "http://smart-life-web.herokuapp.com/api/ver1/auth/sign_in",
+        method = "POST",
+        headers =
+        {
+            ["Accept"] = "*/*",
+            ["Content-Type"] = "application/x-www-form-urlencoded",
+            ["content-length"] = string.len(reqbody)
+        },
+        source = ltn12.source.string(reqbody),
+        sink = ltn12.sink.table(respbody)
+    }
 
+    -- get user info
+    userInfo["uId"]         = headers["uid"]
+    userInfo["accessToken"] = headers["access-token"]
+end
+local function onSendButton(event)
+    if(event.phase=="ended") then
+        getUserInfo()
+        sceneInitialize()
+    end
+end
 
 
 -- scene event
@@ -46,13 +104,13 @@ function scene:create( event )
     local sceneGroup = self.view
 
     -- backGround
-    backGround = display.newImageRect( "imgs/background.jpg", display.contentWidth, display.contentHeight )
-    backGround.anchorX = 0
-    backGround.anchorY = 0
+    loginBackGround = display.newImageRect( "imgs/background.jpg", display.contentWidth, display.contentHeight )
+    loginBackGround.anchorX = 0
+    loginBackGround.anchorY = 0
 
     -- login text
-    login = display.newText("Login",screenW/2,50)
-    login:setFillColor( 0, 0, 0 )
+    loginText = display.newText("Login",screenW/2,50)
+    loginText:setFillColor( 0, 0, 0 )
 
     -- text fields
     emailBox = native.newTextField(screenW/2,130,200,30)
@@ -76,8 +134,8 @@ function scene:create( event )
     sendButton:addEventListener("touch",onSendButton)
 
     -- widget insert
-    sceneGroup:insert( backGround )
-    sceneGroup:insert( login )
+    sceneGroup:insert( loginBackGround )
+    sceneGroup:insert( loginText )
     sceneGroup:insert( emailBox )
     sceneGroup:insert( emailText )
     sceneGroup:insert( passwordBox )
@@ -86,18 +144,44 @@ function scene:create( event )
     sceneGroup:insert( passwrdConfirmationText )
     sceneGroup:insert( sendButton )
 
+    accountBackground = display.newImageRect( "imgs/background.jpg", screenW, screenH-50 )
+    accountBackground.anchorX = 0
+    accountBackground.anchorY = 0
+
+    userImage = display.newImageRect("imgs/account.jpg",50,50)
+    userImage.x = screenW/2
+    userImage.y = 100
+
+    userName = display.newText("dummy",100,100)
+    userName:setFillColor( 0, 0, 0 )
+
+    webSite = display.newText("dummy",100,120)
+    webSite:setFillColor( 0, 0, 0 )
+
+    eMail = display.newText("dummy",100,140)
+    eMail:setFillColor( 0, 0, 0 )
+
+    note = display.newText("dummy",100,160)
+    note:setFillColor( 0, 0, 0 )
+
+    sceneGroup:insert( accountBackground )
+    sceneGroup:insert( userImage )
+    sceneGroup:insert( userName )
+    sceneGroup:insert( webSite )
+    sceneGroup:insert( eMail )
+    sceneGroup:insert( note )
 end
 function scene:show( event )
     local sceneGroup = self.view
     local phase = event.phase
 
     if phase == "will" then
-        emailBox.isVisible = true
-        passwordBox.isVisible = true
-        passwordConfirmationBox.isVisible = true
+        sceneInitialize()
+
     elseif phase == "did" then
         -- Called when the scene is now on screen
     end
+
 end
 function scene:hide( event )
     local sceneGroup = self.view

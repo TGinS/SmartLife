@@ -11,6 +11,9 @@ display.setStatusBar( display.DefaultStatusBar )
 local widget = require "widget"
 local composer = require "composer"
 
+-- declare var
+userInfo = {}
+
 
 -- event listeners for tab buttons:
 local function onFirstView( event )
