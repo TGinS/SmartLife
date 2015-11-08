@@ -14,10 +14,87 @@ local ltn12 = require'ltn12'
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
 local loginBackGround,loginText, emailBox, emailText, passwordBox, passwordText, passwordConfirmationBox, passwrdConfirmationText,sendButton
-local accountBackground,userImage,userName,webSite,eMail,note
+local accountBackground,userImage,userName,webSite,eMail,note,result
 
 -- widget event
+function dump_data(data, deep, multiline_style)
+    local INDENT_STR = "    "
+
+    if (type(data) ~= "table") then
+        return tostring(data)
+    end
+
+    local dump_table
+
+    if (not multiline_style) then
+        dump_table = function(t, deep)
+            local str = "{"
+
+            if (deep) then
+                for k, v in pairs(t) do
+                    if (type(v) == "table") then
+                        str = string.format("%s%s = %s, ",
+                            str, tostring(k), dump_table(v, true))
+                    elseif (type(v) == "string") then
+                        str = string.format("%s%s = %q, ", str, tostring(k), v)
+                    else
+                        str = string.format("%s%s = %s, ", str, tostring(k), tostring(v))
+                    end
+                end
+            else
+                for k, v in pairs(t) do
+                    if (type(v) == "string") then
+                        str = string.format("%s%s = %q, ", str, tostring(k), v)
+                    else
+                        str = string.format("%s%s = %s, ", str, tostring(k), tostring(v))
+                    end
+                end
+            end
+
+            str = str .. "}"
+
+            return str
+        end
+    else
+        dump_table = function(t, deep, indent)
+            local str = "{\n"
+
+            if (deep) then
+                for k, v in pairs(t) do
+                    if (type(v) == "table") then
+                        str = string.format("%s%s%s%s = %s,\n",
+                            str, indent, INDENT_STR, tostring(k),
+                            dump_table(v, true, indent .. INDENT_STR))
+                    elseif (type(v) == "string") then
+                        str = string.format("%s%s%s%s = %q,\n",
+                            str, indent, INDENT_STR, tostring(k), v)
+                    else
+                        str = string.format("%s%s%s%s = %s,\n",
+                            str, indent, INDENT_STR, tostring(k), tostring(v))
+                    end
+                end
+            else
+                for k, v in pairs(t) do
+                    if (type(v) == "string") then
+                        str = string.format("%s%s%s%s = %q,\n",
+                            str, indent, INDENT_STR, tostring(k), v)
+                    else
+                        str = string.format("%s%s%s%s = %s,\n",
+                            str, indent, INDENT_STR, tostring(k), tostring(v))
+                    end
+                end
+            end
+
+            str = str .. indent .. "}"
+
+            return str
+        end
+    end
+
+    return dump_table(data, deep, "")
+end
 local function displayLogin()
+    print("display login")
     loginBackGround.isVisible = true
     loginText.isVisible                 = true
     emailBox.isVisible                  = true
@@ -27,6 +104,7 @@ local function displayLogin()
     passwordConfirmationBox.isVisible   = true
     passwrdConfirmationText.isVisible   = true
     sendButton.isVisible                = true
+    result.isVisible                    = false
     accountBackground.isVisible         = false
     userImage.isVisible                 = false
     userName.isVisible                  = false
@@ -35,6 +113,7 @@ local function displayLogin()
     note.isVisible                      = false
 end
 local function displayAccount()
+    print("display Account")
     loginBackGround.isVisible           = false
     loginText.isVisible                 = false
     emailBox.isVisible                  = false
@@ -44,24 +123,51 @@ local function displayAccount()
     passwordConfirmationBox.isVisible   = false
     passwrdConfirmationText.isVisible   = false
     sendButton.isVisible                = false
+    result.isVisible                    = false
     accountBackground.isVisible         = true
     userImage.isVisible                 = true
     userName.isVisible                  = true
     webSite.isVisible                   = true
     eMail.isVisible                     = true
     note.isVisible                      = true
-    print(userInfo["uId"])
-    print(userInfo["accessToken"])
 end
 local function getUserAccount()
-    print("get account info via api")
+    local respbody = {}
+    local body, code, headers, status = http.request{
+        url = "http://smart-life-web.herokuapp.com/api/ver1/account",
+        method = "GET",
+        headers =
+        {
+            ["Accept"] = "*/*",
+            ["Content-Type"] = "application/x-www-form-urlencoded",
+            ["Uid"] = userInfo["uId"],
+            ["Access-token"] = userInfo["accessToken"]
+        },
+        sink = ltn12.sink.table(respbody)
+    }
+
+    local userData=json.decode(respbody[1])
+
+    return userData
+
+end
+local function setUserAccount(userData)
+    userName.text = userData["user"]["name"]
+    webSite.text = userData["user"]["website"]
+    eMail.text = userData["user"]["email"]
+    note.text = userData["user"]["note"]
+
+    for key,val in pairs(userData["user"]) do
+        print(key, val)
+    end
 end
 local function sceneInitialize()
 
     if(userInfo["uId"]==nil or userInfo["accessToken"]==nil) then
         displayLogin()
     else
-        getUserAccount()
+        local userData = getUserAccount()
+        setUserAccount(userData)
         displayAccount()
     end
 end
@@ -93,8 +199,18 @@ local function getUserInfo()
 end
 local function onSendButton(event)
     if(event.phase=="ended") then
+        print("will get info")
         getUserInfo()
-        sceneInitialize()
+        print("did get info")
+        if(userInfo["uId"]==nil or userInfo["accessToken"]==nil) then
+            print("info is null")
+            sceneInitialize()
+            result.isVisible = true
+
+        else
+            sceneInitialize()
+
+        end
     end
 end
 
@@ -133,6 +249,10 @@ function scene:create( event )
     sendButton.y = screenH -100
     sendButton:addEventListener("touch",onSendButton)
 
+    result = display.newText("Login Failed",screenW/2,300)
+    result:setFillColor( 0, 0, 0 )
+    result.isVisible = false
+
     -- widget insert
     sceneGroup:insert( loginBackGround )
     sceneGroup:insert( loginText )
@@ -143,6 +263,8 @@ function scene:create( event )
     sceneGroup:insert( passwordConfirmationBox )
     sceneGroup:insert( passwrdConfirmationText )
     sceneGroup:insert( sendButton )
+    sceneGroup:insert( result )
+
 
     accountBackground = display.newImageRect( "imgs/background.jpg", screenW, screenH-50 )
     accountBackground.anchorX = 0
