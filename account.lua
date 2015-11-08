@@ -13,86 +13,10 @@ local ltn12 = require'ltn12'
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local loginBackGround,loginText, emailBox, emailText, passwordBox, passwordText, passwordConfirmationBox, passwrdConfirmationText,sendButton
+local loginBackGround,loginText, emailBox, emailText, passwordBox, passwordText,sendButton
 local accountBackground,userImage,userName,webSite,eMail,note,result
 
 -- widget event
-function dump_data(data, deep, multiline_style)
-    local INDENT_STR = "    "
-
-    if (type(data) ~= "table") then
-        return tostring(data)
-    end
-
-    local dump_table
-
-    if (not multiline_style) then
-        dump_table = function(t, deep)
-            local str = "{"
-
-            if (deep) then
-                for k, v in pairs(t) do
-                    if (type(v) == "table") then
-                        str = string.format("%s%s = %s, ",
-                            str, tostring(k), dump_table(v, true))
-                    elseif (type(v) == "string") then
-                        str = string.format("%s%s = %q, ", str, tostring(k), v)
-                    else
-                        str = string.format("%s%s = %s, ", str, tostring(k), tostring(v))
-                    end
-                end
-            else
-                for k, v in pairs(t) do
-                    if (type(v) == "string") then
-                        str = string.format("%s%s = %q, ", str, tostring(k), v)
-                    else
-                        str = string.format("%s%s = %s, ", str, tostring(k), tostring(v))
-                    end
-                end
-            end
-
-            str = str .. "}"
-
-            return str
-        end
-    else
-        dump_table = function(t, deep, indent)
-            local str = "{\n"
-
-            if (deep) then
-                for k, v in pairs(t) do
-                    if (type(v) == "table") then
-                        str = string.format("%s%s%s%s = %s,\n",
-                            str, indent, INDENT_STR, tostring(k),
-                            dump_table(v, true, indent .. INDENT_STR))
-                    elseif (type(v) == "string") then
-                        str = string.format("%s%s%s%s = %q,\n",
-                            str, indent, INDENT_STR, tostring(k), v)
-                    else
-                        str = string.format("%s%s%s%s = %s,\n",
-                            str, indent, INDENT_STR, tostring(k), tostring(v))
-                    end
-                end
-            else
-                for k, v in pairs(t) do
-                    if (type(v) == "string") then
-                        str = string.format("%s%s%s%s = %q,\n",
-                            str, indent, INDENT_STR, tostring(k), v)
-                    else
-                        str = string.format("%s%s%s%s = %s,\n",
-                            str, indent, INDENT_STR, tostring(k), tostring(v))
-                    end
-                end
-            end
-
-            str = str .. indent .. "}"
-
-            return str
-        end
-    end
-
-    return dump_table(data, deep, "")
-end
 local function displayLogin()
     print("display login")
     loginBackGround.isVisible = true
@@ -101,8 +25,6 @@ local function displayLogin()
     emailText.isVisible                 = true
     passwordBox.isVisible               = true
     passwordText.isVisible              = true
-    passwordConfirmationBox.isVisible   = true
-    passwrdConfirmationText.isVisible   = true
     sendButton.isVisible                = true
     result.isVisible                    = false
     accountBackground.isVisible         = false
@@ -120,8 +42,6 @@ local function displayAccount()
     emailText.isVisible                 = false
     passwordBox.isVisible               = false
     passwordText.isVisible              = false
-    passwordConfirmationBox.isVisible   = false
-    passwrdConfirmationText.isVisible   = false
     sendButton.isVisible                = false
     result.isVisible                    = false
     accountBackground.isVisible         = true
@@ -175,11 +95,10 @@ local function getUserInfo()
     -- get text
     local emailText = emailBox.text
     local passwordText = passwordBox.text
-    local passwordConfirmationText = passwordConfirmationBox.text
 
     -- http request
-    local reqbody = "email="..emailText.."&password="..passwordText.."&password_confirmation="..passwordConfirmationText
-    local respbody = {}
+    local reqbody = "email="..emailText.."&password="..passwordText
+    respbody = {}
     local body, code, headers, status = http.request{
         url = "http://smart-life-web.herokuapp.com/api/ver1/auth/sign_in",
         method = "POST",
@@ -238,11 +157,6 @@ function scene:create( event )
     passwordText = display.newText("Password",screenW/2,160)
     passwordText:setFillColor( 0, 0, 0 )
 
-    passwordConfirmationBox = native.newTextField(screenW/2,250,200,30)
-    passwordConfirmationBox.isSecure = true
-    passwrdConfirmationText = display.newText("Cofirm Password",screenW/2,220)
-    passwrdConfirmationText:setFillColor( 0, 0, 0 )
-
     -- send button
     sendButton = display.newImageRect("imgs/send.png",120,40)
     sendButton.x = screenW -70
@@ -260,8 +174,6 @@ function scene:create( event )
     sceneGroup:insert( emailText )
     sceneGroup:insert( passwordBox )
     sceneGroup:insert( passwordText )
-    sceneGroup:insert( passwordConfirmationBox )
-    sceneGroup:insert( passwrdConfirmationText )
     sceneGroup:insert( sendButton )
     sceneGroup:insert( result )
 
@@ -314,7 +226,6 @@ function scene:hide( event )
     elseif phase == "did" then
         emailBox.isVisible = false
         passwordBox.isVisible = false
-        passwordConfirmationBox.isVisible = false
 
     end
 end

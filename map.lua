@@ -89,6 +89,10 @@ local function setInvitationDetail(id)
     invitationType.text     = invitation["type_name"]
     invitationName.text     = invitation["name"]
     invitationUserName.text = invitation["user_name"]
+    if(userInfo["uId"]==nil or userInfo["accessToken"]==nil) then
+        print("null!")
+        invitationVoteButton.isVisible = false
+    end
     invitationNote.text     = invitation["note"]
     local voters = invitation["voters"]
     for i=1,#voters do
@@ -112,8 +116,8 @@ end
 local function displayInvitationDetail(id)
     killDummymap()
     killProvisionDetail()
-    setInvitationDetail(id)
     reviveInvitationDetail()
+    setInvitationDetail(id)
 end
 local function displayProvisionDetail(id)
     killDummymap()
