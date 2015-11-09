@@ -7,7 +7,7 @@ local http = require("socket.http")
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local map,result
+local myMap,result
 local backButton
 
 -- widget event
@@ -37,27 +37,28 @@ local function gotoProvision(id)
     composer.gotoScene("provision")
 end
 
+local function markerListeneDummyr(event)
+
+end
 local function markerListener(event)
     local options =
     {
         body = "I scored over 9000!!! Can you do better?"
     }
-    native.showPopup( "sms", options )end
+    native.showPopup( "sms", options )
+end
 -- scene event
 function scene:create( event  )
     local sceneGroup = self.view
 
-    -- map
-    map = native.newMapView( 20, 20, screenW, screenH - 32 )
-    map.x = display.contentCenterX
-    map.y = display.contentCenterY - 32
-    map.mapType = "standard"
-    map:setRegion(34.7216618061847,137.739935164062,0.05,0.05,false)
-    map.isLocationVisible=true
+    -- Create a native map view
+    myMap = native.newMapView( 0, 0, 300, 220 )
+    myMap.x = display.contentCenterX
+    myMap.y = display.contentCenterY
 
 
     -- widget insert
-    sceneGroup:insert( map )
+    sceneGroup:insert( myMap )
 
 end
 function scene:show( event )
@@ -65,36 +66,39 @@ function scene:show( event )
     local phase = event.phase
 
     if phase == "will" then
-        map.isVisible = true
-
         -- invitations
         local invitations = getInvitations()
         local provisions = getProvisions()
-
-        -- add marker
-        local function addMarker( event )
+        local function addMarker()
             for i=1,#invitations do
                 local options =
                 {
-                    title = invitations[i]["name"],
-                    subtitle = "ïÂèW",
-                    listener = markerListener(),
+                    title = "Displayed Title",
+                    subtitle = "Subtitle text",
+                    listener = markerListener,
+                    -- This will look in the resources directory for the image file
+                    -- Alternatively, this looks in the specified directory for the image file
+                    -- imageFile = { filename="someImage.png", baseDir=system.TemporaryDirectory }
                 }
-                map:addMarker(invitations[i]["latitude"], invitations[i]["longitude"],options)
+                myMap:addMarker(invitations[i]["latitude"], invitations[i]["longitude"],options)
             end
             for i=1,#provisions do
                 local options =
                 {
-                    title = provisions[i]["name"],
-                    subtitle = "íÒãü",
+                    title = "Displayed Title",
+                    subtitle = "Subtitle text",
                     listener = markerListener,
+                    -- This will look in the resources directory for the image file
+                    -- Alternatively, this looks in the specified directory for the image file
+                    -- imageFile = { filename="someImage.png", baseDir=system.TemporaryDirectory }
                 }
-                map:addMarker(provisions[i]["latitude"], provisions[i]["longitude"],options)
+                myMap:addMarker(provisions[i]["latitude"], provisions[i]["longitude"],options)
             end
         end
         timer.performWithDelay( 10, addMarker )
 
         --gotoInvitation(invitations[i]["id"])
+
     end
 end
 function scene:hide( event )
@@ -102,8 +106,6 @@ function scene:hide( event )
     local phase = event.phase
 
     if event.phase == "will" then
-        map.isVisible = false
-        map:removeAllMarkers()
 
     elseif phase == "did" then
 
