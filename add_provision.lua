@@ -58,14 +58,14 @@ function scene:create( event  )
     backGround.anchorX = 0
     backGround.anchorY = 0
 
-    titleText = display.newText("Invitation",screenW/2,50)
+    titleText = display.newText("土地提供",screenW/2,50)
     titleText:setFillColor( 0, 0, 0 )
 
-    nameText = display.newText("name",50,100)
+    nameText = display.newText("提供者氏名",50,100,nil,15)
     nameText:setFillColor( 0, 0, 0 )
     nameBox  = native.newTextField(screenW/2+30,100,200,30)
 
-    noteText = display.newText("note",50,140)
+    noteText = display.newText("備考・条件",50,140)
     noteText:setFillColor( 0, 0, 0 )
     noteBox  = native.newTextField(screenW/2+30,140,200,30)
 

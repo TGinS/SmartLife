@@ -74,11 +74,10 @@ function scene:create( event )
     -- vote button
     applicantVoteButton = display.newImageRect( "imgs/bright_yellow_star.png",50,50)
     applicantVoteButton.x = screenW/2
-    applicantVoteButton.y = 200
-
+    applicantVoteButton.y = 170
 
     -- voter
-    applicantVoterText = display.newText("voter",screenW/2,240)
+    applicantVoterText = display.newText("“Š•[ŽÒ",screenW/2,250)
     applicantVoterText:setFillColor( 0, 0, 0 )
 
 

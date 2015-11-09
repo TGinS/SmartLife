@@ -68,17 +68,17 @@ function scene:create( event )
     loginBackGround.anchorY = 0
 
     -- login text
-    loginText = display.newText("Login",screenW/2,50)
+    loginText = display.newText("ログイン",screenW/2,50,nil,30)
     loginText:setFillColor( 0, 0, 0 )
 
     -- text fields
     loginEmailBox = native.newTextField(screenW/2,130,200,30)
-    loginEmailText = display.newText("Email",screenW/2,100)
+    loginEmailText = display.newText("メールアドレス",screenW/2,100)
     loginEmailText:setFillColor( 0, 0, 0 )
 
     loginPasswordBox = native.newTextField(screenW/2,190,200,30)
     loginPasswordBox.isSecure = true
-    loginPasswordText = display.newText("Password",screenW/2,160)
+    loginPasswordText = display.newText("パスワード",screenW/2,160)
     loginPasswordText:setFillColor( 0, 0, 0 )
 
     -- send button
@@ -91,7 +91,7 @@ function scene:create( event )
     loginSendButton:addEventListener("touch",onLoginSend)
 
     --regist button
-    goRegistButton = display.newText("Regist",screenW-50,50)
+    goRegistButton = display.newText("アカウント登録",screenW-50,30)
     goRegistButton:setFillColor( 0, 0, 0 )
     local function onGoRegist(event)
         gotoRegistration()

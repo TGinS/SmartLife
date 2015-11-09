@@ -58,33 +58,33 @@ function scene:create( event )
     invitationBackGround.anchorY = 0
 
     -- invitation title
-    invitationTitle = display.newText("Invitation",screenW/2,50)
+    invitationTitle = display.newText("活用方法応募",screenW/2,100,nil,25)
     invitationTitle:setFillColor( 0, 0, 0 )
 
     -- name
-    invitationName = display.newText("name", screenW/2,90)
+    invitationName = display.newText("name", screenW/2,130,nil,25)
     invitationName:setFillColor( 0, 0, 0 )
 
     -- invitation type
-    invitationType = display.newText("type_name",screenW/2,70)
+    invitationType = display.newText("type_name",screenW/2,160,nil,25)
     invitationType:setFillColor( 0, 0, 0 )
 
     -- userName
-    invitationUserName = display.newText("user_name",screenW/2,110)
+    invitationUserName = display.newText("user_name",screenW/2,190,nil,25)
     invitationUserName:setFillColor( 0, 0, 0 )
 
     -- note
-    invitationNote = display.newText("note",screenW/2,140)
+    invitationNote = display.newText("note",screenW/2,220,nil,25)
     invitationNote:setFillColor( 0, 0, 0 )
 
     -- vote button
-    invitationVoteButton = display.newImageRect( "imgs/bright_yellow_star.png",50,50)
+    invitationVoteButton = display.newImageRect( "imgs/bright_yellow_star.png",100,100)
     invitationVoteButton.x = screenW/2
-    invitationVoteButton.y = 200
+    invitationVoteButton.y = 300
 
 
     -- voter
-    invitationVoterText = display.newText("投票�?",screenW/2,240)
+    invitationVoterText = display.newText("投票者",screenW/2,370,nil,25)
     invitationVoterText:setFillColor( 0, 0, 0 )
 
 

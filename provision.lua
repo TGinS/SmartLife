@@ -48,28 +48,28 @@ function scene:create( event )
     provisionBackGround.anchorX = 0
     provisionBackGround.anchorY = 0
 
-    provisionTitle = display.newText("��",screenW/2,50)
+    provisionTitle = display.newText("提供",screenW/2,50,nil,25)
     provisionTitle:setFillColor( 0, 0, 0 )
 
     -- name
-    provisionName = display.newText("name", screenW/2,90)
+    provisionName = display.newText("name", screenW/2,90,nil,20)
     provisionName:setFillColor( 0, 0, 0 )
 
     -- usr name
-    provisionUserName = display.newText("user_name", screenW/2,120)
+    provisionUserName = display.newText("user_name", screenW/2,120,nil,20)
     provisionUserName:setFillColor( 0, 0, 0 )
 
     -- note
-    provisionNote = display.newText("note", screenW/2,140)
+    provisionNote = display.newText("note", screenW/2,150,nil,20)
     provisionNote:setFillColor( 0, 0, 0 )
 
     -- apply button
-    applyButton = display.newImageRect("imgs/apply.jpg",200,50)
+    applyButton = display.newImageRect("imgs/apply.jpg",220,50)
     applyButton.x =screenW/2
     applyButton.y = 200
 
     -- applicant list title
-    applicantListTitle = display.newText("applicants",screenW/2,270)
+    applicantListTitle = display.newText("応募者",screenW/2,270)
     applicantListTitle:setFillColor( 0, 0, 0 )
     applicantListTitle.isVisible =  true
 

@@ -33,15 +33,15 @@ function scene:create( event )
     --text.x,text.y = screenW/2,screenH/2
     text:setFillColor(0,0,0)
     
-    text1 = display.newText("Notification", screenW/2, 130, nil, 20)
+    text1 = display.newText("通知", screenW/2, 130, nil, 20)
     --text1.x,text1.y = screenW/2,screenH/2
     text1:setFillColor(0,0,0)
 
-    text2 = display.newText("Character Size", screenW/2, 230, nil, 20)
+    text2 = display.newText("文字サイズ", screenW/2, 230, nil, 20)
     --text2.x,text2.y = screenW/2,screenH/2
     text2:setFillColor(0,0,0)
     
-     text3 = display.newText("Support", screenW/2, 330, nil, 20)
+     text3 = display.newText("サポート", screenW/2, 330, nil, 20)
     --text3.x,text3.y = screenW/2,screenH/2
     text3:setFillColor(0,0,0)
 

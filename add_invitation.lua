@@ -67,22 +67,22 @@ function scene:create( event  )
     backGround.anchorX = 0
     backGround.anchorY = 0
 
-    titleText = display.newText("Invitation",screenW/2,50)
+    titleText = display.newText("活用方法応募",screenW/2,50,nil,30)
     titleText:setFillColor( 0, 0, 0 )
 
-    nameText = display.newText("name",50,100)
+    nameText = display.newText("応募者氏名",50,100,nil,15)
     nameText:setFillColor( 0, 0, 0 )
     nameBox  = native.newTextField(screenW/2+30,100,200,30)
 
-    typeText = display.newText("type",50,140)
+    typeText = display.newText("活用方法",50,140)
     typeText:setFillColor( 0, 0, 0 )
     local columnData =
     {
         {
-            align = "right",
+            align = "left",
             width = 140,
             startIndex = 1,
-            labels = {"WannaDoThis", "WantThis"}
+            labels = {"出店", "イベント"}
         }
     }
     typePicker  = widget.newPickerWheel{columns = columnData}
@@ -91,7 +91,7 @@ function scene:create( event  )
     typePicker.y = 180
     --native.newTextField(screenW/2+30,140,200,30)
 
-    noteText = display.newText("note",50,260)
+    noteText = display.newText("備考・条件",50,260)
     noteText:setFillColor( 0, 0, 0 )
     noteBox  = native.newTextField(screenW/2+30,260,200,30)
 

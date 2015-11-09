@@ -48,10 +48,10 @@ function scene:create( event  )
     dummyMapBackGround.anchorX = 0
     dummyMapBackGround.anchorY = 0
 
-    invitationText = display.newText("invitations",60,30)
+    invitationText = display.newText("土地活用方法応募",100,30)
     invitationText:setFillColor( 0, 0, 0 )
 
-    provisionText = display.newText("provisions",60,0)
+    provisionText = display.newText("土地提供",60,0)
     provisionText:setFillColor( 0, 0, 0 )
 
     addButton = display.newImageRect("imgs/FAB.png",50,50)

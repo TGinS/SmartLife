@@ -57,32 +57,32 @@ function scene:create( event )
     registBackGround.anchorX = 0
     registBackGround.anchorY = 0
 
-    registText = display.newText("Registration",screenW/2,50)
+    registText = display.newText("アカウント登録",screenW/2,50,nil,30)
     registText:setFillColor( 0, 0, 0 )
 
-    registNameText = display.newText("name",50,100)
+    registNameText = display.newText("名前",50,100,nil,15)
     registNameText:setFillColor( 0, 0, 0 )
     registNameBox  = native.newTextField(screenW/2+30,100,200,30)
 
-    registEmailText = display.newText("Email",50,140)
+    registEmailText = display.newText("メールアドレス",46,140,nil,15)
     registEmailText:setFillColor( 0, 0, 0 )
     registEmailBox  = native.newTextField(screenW/2+30,140,200,30)
 
-    registPasswordText = display.newText("Pass",50,180)
+    registPasswordText = display.newText("パスワード",50,180,nil,15)
     registPasswordText:setFillColor( 0, 0, 0 )
     registPasswordBox  = native.newTextField(screenW/2+30,180,200,30)
     registPasswordBox.isSecure = true
 
-    registPasswordConfirmationText = display.newText("confirm",50,220)
+    registPasswordConfirmationText = display.newText("パスワード(再)",46,220,nil,15)
     registPasswordConfirmationText:setFillColor( 0, 0, 0 )
     registPasswordConfirmationBox  = native.newTextField(screenW/2+30,220,200,30)
     registPasswordConfirmationBox.isSecure = true
 
-    registWebsiteText = display.newText("website",50,260)
+    registWebsiteText = display.newText("WEBサイト",50,260)
     registWebsiteText:setFillColor( 0, 0, 0 )
     registWebsiteBox  = native.newTextField(screenW/2+30,260,200,30)
 
-    registNoteText = display.newText("note",50,300)
+    registNoteText = display.newText("備考",50,300)
     registNoteText:setFillColor( 0, 0, 0 )
     registNoteBox  = native.newTextField(screenW/2+30,300,200,30)
 
