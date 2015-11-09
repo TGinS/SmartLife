@@ -7,10 +7,10 @@ local http = require("socket.http")
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local dummyMapBackGround,invitationText,invitationGroup,provisionText,provisionGroup
+local dummyMapBackGround,invitationText,invitationGroup,provisionText,provisionGroup,addButton
 local flash
 local backButton
-
+local lat,lng = 35.681085187825936,139.25330186328122
 
 -- widget event
 
@@ -25,6 +25,11 @@ local function getProvisions()
     return provisions
 end
 
+local function gotoTypeSelect()
+    composer.setVariable("latitude",lat)
+    composer.setVariable("longitude",lng)
+    composer.gotoScene("type_select")
+end
 local function gotoInvitation(id)
     composer.setVariable("invitationId",id)
     composer.gotoScene("invitation")
@@ -38,8 +43,6 @@ end
 function scene:create( event  )
     local sceneGroup = self.view
 
-    print("Map page create called")
-
     -- backGround
     dummyMapBackGround = display.newImageRect("imgs/background.jpg", display.contentWidth, display.contentHeight )
     dummyMapBackGround.anchorX = 0
@@ -51,11 +54,20 @@ function scene:create( event  )
     provisionText = display.newText("provisions",60,0)
     provisionText:setFillColor( 0, 0, 0 )
 
+    addButton = display.newImageRect("imgs/FAB.png",50,50)
+    addButton.x = screenW-50
+    addButton.y = screenH-100
+    local function onAddButton(event)
+        gotoTypeSelect()
+    end
+    addButton:addEventListener("touch",onAddButton)
+
 
     -- widget insert
     sceneGroup:insert( dummyMapBackGround )
     sceneGroup:insert( invitationText )
     sceneGroup:insert( provisionText )
+    sceneGroup:insert( addButton )
 
     -- flash text
     flash = display.newText("",screenW-50,screenH-100)

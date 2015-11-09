@@ -1,9 +1,10 @@
------------------------------------------------------------------------------------------
 --
--- apply.lua
+-- Created by IntelliJ IDEA.
+-- User: Taiga
+-- Date: 2015/11/09
+-- Time: 20:10
+-- To change this template use File | Settings | File Templates.
 --
------------------------------------------------------------------------------------------
-
 local composer = require "composer"
 local scene = composer.newScene()
 local widget = require "widget"
@@ -12,18 +13,27 @@ local http = require("socket.http")
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local applyBackGround,applyTitle,nameText,nameBox,noteText,noteBox,sendButton
-local flash
+local backGround,titleText,nameBox,nameText,typePicker,typeText,noteBox,noteText,sendButton
 local backButton
+local flash
 
 -- widget event
-local function createApplicant()
-    local provisionId = composer.getVariable("provisionId")
-    -- http request
-    local reqbody = "name="..nameBox.text.."&note="..noteBox.text.."&provision_id="..provisionId
+local function createInvitation()
+
+    -- get type id
+    local type = typePicker:getValues()[1].value
+    local type_id
+    if(type == "WannaDoThis")then
+        type_id =1
+    elseif(type == "WantThis") then
+        type_id =2
+    end
+
+    -- http
+    local reqbody = "name="..nameBox.text.."&note="..noteBox.text.."&type_id="..type_id.."&latitude="..composer.getVariable("latitude").."&longitude="..composer.getVariable("longitude")
     local respbody = {}
     local body, code, headers, status = http.request{
-        url = "http://smart-life-web.herokuapp.com/api/ver1/candidate",
+        url = "http://smart-life-web.herokuapp.com/api/ver1/invitation",
         method = "POST",
         headers =
         {
@@ -44,55 +54,65 @@ local function createApplicant()
         flash.text = "success"
         flash.isVisible = true
     end
-
-    --remove listener
-    --sendButton._functionListeners = nil
-    --sendButton._tableListeners = nil
 end
 local function gotoMap()
     composer.gotoScene( "map_tab" )
 end
 
 -- scene event
-function scene:create( event )
+function scene:create( event  )
     local sceneGroup = self.view
 
+    backGround = display.newImageRect("imgs/background.jpg", display.contentWidth, display.contentHeight )
+    backGround.anchorX = 0
+    backGround.anchorY = 0
 
-    -- back
-    applyBackGround = display.newImageRect( "imgs/background.jpg", display.contentWidth, display.contentHeight )
-    applyBackGround.anchorX = 0
-    applyBackGround.anchorY = 0
+    titleText = display.newText("Invitation",screenW/2,50)
+    titleText:setFillColor( 0, 0, 0 )
 
-    -- title
-    applyTitle = display.newText("‰ž•å",screenW/2,50)
-    applyTitle:setFillColor( 0, 0, 0 )
-
-    -- name
-    nameBox = native.newTextField(screenW/2,130,200,30)
-    nameText = display.newText("name",screenW/2,100)
+    nameText = display.newText("name",50,100)
     nameText:setFillColor( 0, 0, 0 )
+    nameBox  = native.newTextField(screenW/2+30,100,200,30)
 
-    -- note
-    noteBox = native.newTextField(screenW/2,190,200,30)
-    noteText = display.newText("note",screenW/2,160)
+    typeText = display.newText("type",50,140)
+    typeText:setFillColor( 0, 0, 0 )
+    local columnData =
+    {
+        {
+            align = "right",
+            width = 140,
+            startIndex = 1,
+            labels = {"WannaDoThis", "WantThis"}
+        }
+    }
+    typePicker  = widget.newPickerWheel{columns = columnData}
+    typePicker.anchorChildren = true
+    typePicker.x = screenW/2+30
+    typePicker.y = 180
+    --native.newTextField(screenW/2+30,140,200,30)
+
+    noteText = display.newText("note",50,260)
     noteText:setFillColor( 0, 0, 0 )
+    noteBox  = native.newTextField(screenW/2+30,260,200,30)
 
     -- send button
     sendButton = display.newImageRect("imgs/send.png",120,40)
     sendButton.x = screenW -70
     sendButton.y = screenH -100
     local function onSendButton(event)
-        createApplicant()
+        createInvitation()
     end
     sendButton:addEventListener("touch",onSendButton)
 
-    sceneGroup:insert( applyBackGround )
-    sceneGroup:insert( applyTitle )
-    sceneGroup:insert( nameBox )
-    sceneGroup:insert( nameText )
-    sceneGroup:insert( noteBox )
-    sceneGroup:insert( noteText )
-    sceneGroup:insert( sendButton )
+    sceneGroup:insert(backGround)
+    sceneGroup:insert(titleText)
+    sceneGroup:insert(typePicker)
+    sceneGroup:insert(typeText)
+    sceneGroup:insert(nameText)
+    sceneGroup:insert(nameBox)
+    sceneGroup:insert(noteText)
+    sceneGroup:insert(noteBox)
+    sceneGroup:insert(sendButton)
 
     -- back button
     backButton = display.newImageRect("imgs/back-button.png",50,50)
@@ -116,12 +136,12 @@ function scene:show( event )
     local phase = event.phase
 
     if phase == "will" then
+
+    end
+    if phase == "did" then
         nameBox.isVisible = true
+        typePicker.isVisible = true
         noteBox.isVisible = true
-
-    elseif phase == "did" then
-
-        -- Called when the scene is now on screen
     end
 end
 function scene:hide( event )
@@ -130,16 +150,14 @@ function scene:hide( event )
 
     if event.phase == "will" then
         nameBox.isVisible = false
+        typePicker.isVisible = false
         noteBox.isVisible = false
     elseif phase == "did" then
-        --remove applicant group
 
     end
 end
 function scene:destroy( event )
     local sceneGroup = self.view
-
-    -- Called prior to the removal of scene's "view" (sceneGroup)
 end
 
 -- Add scene Listener
@@ -149,3 +167,4 @@ scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
 
 return scene
+
