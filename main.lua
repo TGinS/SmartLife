@@ -4,8 +4,6 @@
 --
 -----------------------------------------------------------------------------------------
 
---ÉÅÉCÉìÇ≈Ç∑
-
 -- show default status bar (iOS)
 display.setStatusBar( display.DefaultStatusBar )
 
@@ -13,19 +11,22 @@ display.setStatusBar( display.DefaultStatusBar )
 local widget = require "widget"
 local composer = require "composer"
 
+-- declare global var
+userInfo = {}
+provisionIdForApply=0
 
 -- event listeners for tab buttons:
 local function onFirstView( event )
-    composer.gotoScene( "ranking" )
+    composer.gotoScene( "ranking_tab" )
 end
 local function onSecondView( event )
-    composer.gotoScene( "map" )
+    composer.gotoScene( "map_tab" )
 end
 local function onThirdView( event )
-    composer.gotoScene( "setting" )
+    composer.gotoScene( "setting_tab" )
 end
 local function onFourthView( event )
-    composer.gotoScene( "account" )
+    composer.gotoScene( "account_tab" )
 end
 
 
