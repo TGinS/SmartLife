@@ -12,7 +12,7 @@ local http = require("socket.http")
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local provisionBackGround,provisionTitle,provisionName,provisionUserName,provisionNote,applicantListTitle,applicantsGroup
+local provisionBackGround,provisionTitle,provisionName,provisionUserName,provisionNote,applyButton,applicantListTitle,applicantsGroup
 local flash
 local backButton
 
@@ -27,6 +27,10 @@ local function getApplicants(provisionId)
     local applicants = json.decode(applicants_data)["candidates"]
     return applicants
 end
+local function gotoApply(id)
+    composer.setVariable("provisionId",id)
+    composer.gotoScene("apply")
+end
 local function gotoApplicant(id)
     composer.setVariable("applicantId",id)
     composer.gotoScene("applicant")
@@ -39,7 +43,7 @@ end
 function scene:create( event )
     local sceneGroup = self.view
 
-
+    -- back
     provisionBackGround = display.newImageRect( "imgs/background.jpg", display.contentWidth, display.contentHeight )
     provisionBackGround.anchorX = 0
     provisionBackGround.anchorY = 0
@@ -59,13 +63,15 @@ function scene:create( event )
     provisionNote = display.newText("note", screenW/2,140)
     provisionNote:setFillColor( 0, 0, 0 )
 
+    -- apply button
+    applyButton = display.newImageRect("imgs/apply.jpg",200,50)
+    applyButton.x =screenW/2
+    applyButton.y = 200
 
-    -- title
-    applicantListTitle = display.newText("applicants",screenW/2,170)
+    -- applicant list title
+    applicantListTitle = display.newText("applicants",screenW/2,270)
     applicantListTitle:setFillColor( 0, 0, 0 )
     applicantListTitle.isVisible =  true
-
-
 
     sceneGroup:insert( provisionBackGround )
     sceneGroup:insert( provisionTitle )
@@ -73,6 +79,7 @@ function scene:create( event )
     sceneGroup:insert( provisionUserName )
     sceneGroup:insert( provisionNote )
     sceneGroup:insert( applicantListTitle )
+    sceneGroup:insert( applyButton )
 
     -- back button
     backButton = display.newImageRect("imgs/back-button.png",50,50)
@@ -100,20 +107,27 @@ function scene:show( event )
         local provisionId = composer.getVariable("provisionId")
         local provision = getProvision(provisionId)
 
+        -- set text
         provisionName.text = provision["name"]
         provisionUserName.text = provision["user_name"]
         provisionNote.text = provision["note"]
 
-        -- applicant group
+        -- set listener applyButton
+        local function onApplyButton()
+            gotoApply(provisionId)
+        end
+        applyButton:addEventListener("touch",onApplyButton)
+
+        -- set applicant group
         local applicants = getApplicants(provisionId)
         applicantsGroup = display.newGroup()
         for i=1,#applicants do
-            local applicantId = display.newText(applicantsGroup,applicants[i]["id"],screenW/4,200+i*20)
+            local applicantId = display.newText(applicantsGroup,applicants[i]["id"],screenW/4,270+i*20)
             applicantId:setFillColor( 0, 0, 0 )
-            local applicantName = display.newText(applicantsGroup,applicants[i]["name"],screenW/2,200+i*20)
+            local applicantName = display.newText(applicantsGroup,applicants[i]["name"],screenW/2,270+i*20)
             applicantName:setFillColor( 0, 0, 0 )
             local applicantRight = display.newImageRect(applicantsGroup,"imgs/right.jpg",25,25)
-            applicantRight.x,applicantRight.y = screenW-40,200+i*20
+            applicantRight.x,applicantRight.y = screenW-40,270+i*20
             local function onApplicantRight(event)
                 if(event.phase=="ended") then
                     gotoApplicant(applicants[i]["id"])
@@ -135,6 +149,7 @@ function scene:hide( event )
     if event.phase == "will" then
 
     elseif phase == "did" then
+        --remove applicant group
         sceneGroup:remove(applicantsGroup)
     end
 end

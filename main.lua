@@ -11,9 +11,9 @@ display.setStatusBar( display.DefaultStatusBar )
 local widget = require "widget"
 local composer = require "composer"
 
--- declare var
+-- declare global var
 userInfo = {}
-
+provisionIdForApply=0
 
 -- event listeners for tab buttons:
 local function onFirstView( event )
@@ -26,7 +26,6 @@ local function onThirdView( event )
     composer.gotoScene( "setting_tab" )
 end
 local function onFourthView( event )
-    print("will go to account_tab")
     composer.gotoScene( "account_tab" )
 end
 
