@@ -74,6 +74,9 @@ function scene:show( event )
     local phase = event.phase
 
     if phase == "will" then
+        latText.text = composer.getVariable("latitude")
+        lngText.text = composer.getVariable("longitude")
+
 
     end
 end

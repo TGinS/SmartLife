@@ -20,7 +20,7 @@ local function onFirstView( event )
     composer.gotoScene( "ranking_tab" )
 end
 local function onSecondView( event )
-    composer.gotoScene( "map_dummy" )
+    composer.gotoScene( "map_tab" )
 end
 local function onThirdView( event )
     composer.gotoScene( "setting_tab" )
