@@ -12,7 +12,7 @@ local http = require("socket.http")
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local provisionBackGround,provisionTitle,provisionName,provisionUserName,provisionNote,applyButton,applicantListTitle,applicantsGroup
+local provisionBackGround,provisionTitle,provisionName,provisionUserName,provisionNote,applyButton,applicantListTitle,applicantsGroup,map
 local flash
 local backButton
 
@@ -63,13 +63,21 @@ function scene:create( event )
     provisionNote = display.newText("note", screenW/2,140)
     provisionNote:setFillColor( 0, 0, 0 )
 
+    --map
+    map = native.newMapView( 20, 20, screenW-100, 100 )
+    map.x = screenW/2
+    map.y = 220
+    map:setRegion(34.7216618061847,137.739935164062,0.05,0.05,false)
+    map.mapType = "standard"
+    map.isLocationVisible=false
+
     -- apply button
-    applyButton = display.newImageRect("imgs/apply.jpg",200,50)
-    applyButton.x =screenW/2
-    applyButton.y = 200
+    applyButton = display.newImageRect("imgs/apply.jpg",100,50)
+    applyButton.x =screenW - screenW/5
+    applyButton.y = screenH-80
 
     -- applicant list title
-    applicantListTitle = display.newText("applicants",screenW/2,270)
+    applicantListTitle = display.newText("applicants",screenW/2,290)
     applicantListTitle:setFillColor( 0, 0, 0 )
     applicantListTitle.isVisible =  true
 
@@ -78,6 +86,7 @@ function scene:create( event )
     sceneGroup:insert( provisionName )
     sceneGroup:insert( provisionUserName )
     sceneGroup:insert( provisionNote )
+    sceneGroup:insert( map )
     sceneGroup:insert( applicantListTitle )
     sceneGroup:insert( applyButton )
 
@@ -122,12 +131,12 @@ function scene:show( event )
         local applicants = getApplicants(provisionId)
         applicantsGroup = display.newGroup()
         for i=1,#applicants do
-            local applicantId = display.newText(applicantsGroup,applicants[i]["id"],screenW/4,270+i*20)
+            local applicantId = display.newText(applicantsGroup,applicants[i]["id"],screenW/4,290+i*20)
             applicantId:setFillColor( 0, 0, 0 )
-            local applicantName = display.newText(applicantsGroup,applicants[i]["name"],screenW/2,270+i*20)
+            local applicantName = display.newText(applicantsGroup,applicants[i]["name"],screenW/2,290+i*20)
             applicantName:setFillColor( 0, 0, 0 )
             local applicantRight = display.newImageRect(applicantsGroup,"imgs/right.jpg",25,25)
-            applicantRight.x,applicantRight.y = screenW-40,270+i*20
+            applicantRight.x,applicantRight.y = screenW-40,290+i*20
             local function onApplicantRight(event)
                 if(event.phase=="ended") then
                     gotoApplicant(applicants[i]["id"])
@@ -137,6 +146,17 @@ function scene:show( event )
         end
         sceneGroup:insert( applicantsGroup )
 
+        map.isVisible = true
+        local options =
+        {
+            title = provision["name"],
+            subtitle = "’ñ‹Ÿ",
+            -- This will look in the resources directory for the image file
+            -- Alternatively, this looks in the specified directory for the image file
+            -- imageFile = { filename="someImage.png", baseDir=system.TemporaryDirectory }
+        }
+        map:addMarker(provision["latitude"], provision["longitude"],options)
+        map:setCenter(provision["latitude"],provision["longitude"])
 
     elseif phase == "did" then
         -- Called when the scene is now on screen
@@ -147,6 +167,8 @@ function scene:hide( event )
     local phase = event.phase
 
     if event.phase == "will" then
+        map:removeAllMarkers()
+        map.isVisible = false
 
     elseif phase == "did" then
         --remove applicant group

@@ -13,7 +13,7 @@ local http = require("socket.http")
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local backGround,invitationButton,provisionButton,latText,lngText
+local backGround,invitationButton,provisionButton,locationText,map
 local backButton
 
 -- widget event
@@ -43,19 +43,27 @@ function scene:create( event  )
 
     provisionButton = display.newImageRect("imgs/provisionButton.png", 100,50 )
     provisionButton.x = screenW/2
-    provisionButton.y = 200
+    provisionButton.y = 180
     provisionButton:addEventListener("touch",gotoAddProvision)
 
-    latText = display.newText(composer.getVariable("latitude"),screenW/2,300)
-    latText:setFillColor( 0, 0, 0 )
-    lngText = display.newText(composer.getVariable("longitude"),screenW/2,320)
-    lngText:setFillColor( 0, 0, 0 )
+    -- text
+    locationText = display.newText("’Ç‰ÁˆÊ’u",screenW/2,220)
+    locationText:setFillColor( 0, 0, 0 )
+
+    --map
+    map = native.newMapView( 20, 20, screenW-150, 150 )
+    map.x = screenW/2
+    map.y = 310
+    map:setRegion(34.7216618061847,137.739935164062,0.05,0.05,false)
+    map.mapType = "standard"
+    map.isLocationVisible=false
+
 
     sceneGroup:insert(backGround)
     sceneGroup:insert(invitationButton)
     sceneGroup:insert(provisionButton)
-    sceneGroup:insert(latText)
-    sceneGroup:insert(lngText)
+    sceneGroup:insert(locationText)
+    sceneGroup:insert(map)
 
     -- back button
     backButton = display.newImageRect("imgs/back-button.png",50,50)
@@ -74,10 +82,19 @@ function scene:show( event )
     local phase = event.phase
 
     if phase == "will" then
-        latText.text = composer.getVariable("latitude")
-        lngText.text = composer.getVariable("longitude")
-
-
+        map.isVisible = true
+        local lat = composer.getVariable("latitude")
+        local lng = composer.getVariable("longitude")
+        local options =
+        {
+            title = "Title",
+            subtitle = "Type",
+            -- This will look in the resources directory for the image file
+            -- Alternatively, this looks in the specified directory for the image file
+            -- imageFile = { filename="someImage.png", baseDir=system.TemporaryDirectory }
+        }
+        map:addMarker(lat, lng,options)
+        map:setCenter(lat, lng)
     end
 end
 function scene:hide( event )
@@ -85,12 +102,12 @@ function scene:hide( event )
     local phase = event.phase
 
     if event.phase == "will" then
-        print("Map page hide will called")
+        map:removeAllMarkers()
+        map.isVisible = false
 
     elseif phase == "did" then
         print("Map page hide did called")
-        sceneGroup:remove(invitationGroup)
-        sceneGroup:remove(provisionGroup)
+
     end
 end
 function scene:destroy( event )

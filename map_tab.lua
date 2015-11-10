@@ -85,7 +85,7 @@ function scene:show( event )
             end
             for i=1,#provisions do
                 local function callProvision()
-                    gotoInvitation(invitations[i]["id"])
+                    gotoProvision(provisions[i]["id"])
                 end
                 local options =
                 {

@@ -12,7 +12,7 @@ local http = require("socket.http")
 
 -- declare var
 local screenW, screenH = display.contentWidth, display.contentHeight
-local invitationBackGround,invitationTitle,invitationType,invitationName,invitationUserName,invitationNote,invitationVoteButton,invitationVoterText,invitationVoterGroup
+local invitationBackGround,invitationTitle,invitationType,invitationName,invitationUserName,invitationNote,map,invitationVoteButton,invitationVoterText,invitationVoterGroup
 local flash
 local backButton
 
@@ -77,14 +77,22 @@ function scene:create( event )
     invitationNote = display.newText("note",screenW/2,140)
     invitationNote:setFillColor( 0, 0, 0 )
 
+    --map
+    map = native.newMapView( 20, 20, screenW-100, 100 )
+    map.x = screenW/2
+    map.y = 200
+    map:setRegion(34.7216618061847,137.739935164062,0.05,0.05,false)
+    map.mapType = "standard"
+    map.isLocationVisible=false
+
     -- vote button
-    invitationVoteButton = display.newImageRect( "imgs/bright_yellow_star.png",50,50)
-    invitationVoteButton.x = screenW/2
-    invitationVoteButton.y = 200
+    invitationVoteButton = display.newImageRect( "imgs/bright_yellow_star.png",25,25)
+    invitationVoteButton.x = screenW-screenW/5
+    invitationVoteButton.y = screenH-70
 
 
     -- voter
-    invitationVoterText = display.newText("ÊäïÁ•®ËÄ?",screenW/2,240)
+    invitationVoterText = display.newText("ÊäïÁ•®ËÄ?",screenW/2,270)
     invitationVoterText:setFillColor( 0, 0, 0 )
 
 
@@ -96,6 +104,7 @@ function scene:create( event )
     sceneGroup:insert( invitationType )
     sceneGroup:insert( invitationUserName )
     sceneGroup:insert( invitationNote )
+    sceneGroup:insert( map )
     sceneGroup:insert( invitationVoteButton )
     sceneGroup:insert( invitationVoterText )
 
@@ -129,6 +138,20 @@ function scene:show( event )
         invitationUserName.text = invitation["user_name"]
         invitationNote.text = invitation["note"]
 
+        --map
+        map.isVisible = true
+        local options =
+        {
+            title = invitation["name"],
+            subtitle = "ïÂèW",
+            -- This will look in the resources directory for the image file
+            -- Alternatively, this looks in the specified directory for the image file
+            -- imageFile = { filename="someImage.png", baseDir=system.TemporaryDirectory }
+        }
+        map:addMarker(invitation["latitude"], invitation["longitude"],options)
+        map:setCenter(invitation["latitude"], invitation["longitude"])
+
+
         -- vote button
         local function onInvitationVote(event)
             if(event.phase == "ended") then
@@ -146,7 +169,7 @@ function scene:show( event )
         local voters = invitation["voters"]
         invitationVoterGroup = display.newGroup()
         for i=1,#voters do
-            local invitationVoter = display.newText(invitationVoterGroup,voters[i]["name"],screenW/2,250+i*15)
+            local invitationVoter = display.newText(invitationVoterGroup,voters[i]["name"],screenW/2,270+i*15)
             invitationVoter:setFillColor( 0, 0, 0 )
         end
         sceneGroup:insert( invitationVoterGroup )
@@ -161,7 +184,8 @@ function scene:hide( event )
     local phase = event.phase
 
     if event.phase == "will" then
-
+        map:removeAllMarkers()
+        map.isVisible = false
     elseif phase == "did" then
         sceneGroup:remove( invitationVoterGroup )
     end
